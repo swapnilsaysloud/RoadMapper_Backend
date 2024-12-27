@@ -35,6 +35,12 @@ def parse_llm_response(response):
         return {"error": "Failed to parse LLM response as JSON"}
 
 
+@app.route('/',methods=['GET','OPTIONS'])
+def keep_alive():
+    if request.method == 'OPTIONS': 
+        return build_preflight_response()
+    return build_actual_response("Jag raha hu bhai")
+
 @app.route('/api/learn', methods=['GET','OPTIONS'])
 def learn_topic():
     if request.method == 'OPTIONS': 
