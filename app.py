@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-from flask import Flask, request, jsonify, Response, stream_with_context
+from flask import Flask, request, jsonify, Response, stream_with_context,make_response
 from flask_cors import CORS
 import json
 import sqlite3
@@ -14,10 +14,20 @@ load_dotenv()
 API_KEY = os.getenv("API_KEY")
 client = MiraClient(config={"API_KEY": API_KEY}) 
 
+def build_preflight_response():
+    response = make_response()
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add('Access-Control-Allow-Headers', "*")
+    response.headers.add('Access-Control-Allow-Methods', "*")
+    return response
+def build_actual_response(response):
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
+
 def parse_llm_response(response):
     try:
         cleaned_response = response.strip("```json").strip("```").strip()
-        print(f"Cleaned response: {cleaned_response}")  # Added for debugging
+        #print(f"Cleaned response: {cleaned_response}")  # Added for debugging
         
         return json.loads(cleaned_response)
     except json.JSONDecodeError as e:
@@ -25,8 +35,11 @@ def parse_llm_response(response):
         return {"error": "Failed to parse LLM response as JSON"}
 
 
-@app.route('/api/learn', methods=['GET'])
+@app.route('/api/learn', methods=['GET','OPTIONS'])
 def learn_topic():
+    if request.method == 'OPTIONS': 
+        return build_preflight_response()
+    
     topic = request.args.get('topic', '')
     if not topic:
         return jsonify({"error": "No topic provided"}), 400
@@ -59,19 +72,22 @@ def learn_topic():
         if attempt == max_attempts:
             return jsonify({"error": "json not proper"}), 500
         if 'topic' not in parsed_response or 'levels' not in parsed_response:
-            return jsonify({"error": "Invalid response structure from LLM"}), 500
+            return build_actual_response(jsonify({"error": "Invalid response structure from LLM"})), 500
 
         
         #print(parsed_response)
-        return jsonify(parsed_response)
+        #print("returning")
+        return build_actual_response(jsonify(parsed_response))
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 
-@app.route('/api/expand_node', methods=['POST'])
+@app.route('/api/expand_node', methods=['POST','OPTIONS'])
 def expand_node():
     #print(request.json)
+    if request.method == 'OPTIONS': 
+        return build_preflight_response()
     data = request.json
     topic = data.get('topic')
     node_id = data.get('node_id')
@@ -111,11 +127,13 @@ def expand_node():
         except Exception as e:
             return jsonify({"error": str(e)}), 500
         
-    return Response(stream_with_context(generate()), content_type='application/json')
+    return build_actual_response(Response(stream_with_context(generate()), content_type='application/json'))
 
-@app.route('/api/node_question', methods=['POST'])
+@app.route('/api/node_question', methods=['POST','OPTIONS'])
 def node_question():
     data = request.json
+    if request.method == 'OPTIONS': 
+        return build_preflight_response()
     topic = data.get('topic')
     node_id = data.get('node_id')
     question = data.get('question')
@@ -138,7 +156,7 @@ def node_question():
             flow_name = "swapnilsaysloud/Chat With Me"
 
         response = client.flow.execute(flow_name, input_data2)
-        return jsonify({"answer": response['result']})
+        return build_actual_response(jsonify({"answer": response['result']}))
     
     except Exception as e:
         return jsonify({"error": str(e)}), 500
