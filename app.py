@@ -47,9 +47,9 @@ def learn_topic():
     try:
         version = "0.0.2"
         if version:
-            flow_name = f"swapnilsaysloud/Roadmap Generator/{version}"
+            flow_name = f"@swapnilsaysloud/roadmap-generator/{version}"
         else:
-                flow_name = "swapnilsaysloud/Roadmap Generator"
+                flow_name = "@swapnilsaysloud/roadmap-generator"
         input_dict = {"input_topic": topic}                                       
          
         attempt = 0 
@@ -114,9 +114,9 @@ def expand_node():
                         }
 
             if version:
-                flow_name = f"swapnilsaysloud/Tell Me More/{version}"
+                flow_name = f"@swapnilsaysloud/tell-me-more/{version}"
             else:
-                flow_name = "swapnilsaysloud/Tell Me More"
+                flow_name = "@swapnilsaysloud/tell-me-more"
 
             response = client.flow.execute(flow_name, input_data)
             
@@ -151,9 +151,9 @@ def node_question():
                         }
 
         if version:
-            flow_name = f"swapnilsaysloud/Chat With Me/{version}"
+            flow_name = f"@swapnilsaysloud/chat-with-me/{version}"
         else:
-            flow_name = "swapnilsaysloud/Chat With Me"
+            flow_name = "@swapnilsaysloud/chat-with-me"
 
         response = client.flow.execute(flow_name, input_data2)
         return build_actual_response(jsonify({"answer": response['result']}))
