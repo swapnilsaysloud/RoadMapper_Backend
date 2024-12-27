@@ -131,9 +131,9 @@ def expand_node():
 
 @app.route('/api/node_question', methods=['POST','OPTIONS'])
 def node_question():
-    data = request.json
     if request.method == 'OPTIONS': 
         return build_preflight_response()
+    data = request.json
     topic = data.get('topic')
     node_id = data.get('node_id')
     question = data.get('question')
