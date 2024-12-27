@@ -39,7 +39,7 @@ def parse_llm_response(response):
 def keep_alive():
     if request.method == 'OPTIONS': 
         return build_preflight_response()
-    return build_actual_response("Jag raha hu bhai")
+    return build_actual_response(jsonify({"Reply": "Jag Raha hu bhai"})), 200
 
 @app.route('/api/learn', methods=['GET','OPTIONS'])
 def learn_topic():
