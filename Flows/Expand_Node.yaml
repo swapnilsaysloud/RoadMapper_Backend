@@ -1,0 +1,46 @@
+version: 0.0.2                         
+
+metadata:
+  name: "Tell Me More"                              
+  description: "Given The current topic, title and little content, this flow provides a detailed description for the user to know more about it."       
+  author: "swapnilsaysloud"                              
+  tags: []                      
+  private: false                                       
+
+# Define the input variables required
+inputs:
+  topic:                                             
+    type: string                                       
+    description: "Topic for which we want the info"
+    required: true
+    example: "Artificial Intelligence"
+  title:                                             
+    type: string                                       
+    description: "Title for the content"
+    required: true
+    example: "Artificial Intelligence"
+  content:                                             
+    type: string                                       
+    description: "If you want to give some already present content"
+    required: false
+    example: "Artificial Intelligence (AI) is the simulation of human intelligence in machines programmed to think, learn, and make decisions, enabling them to perform tasks that typically require human cognition."
+
+
+# LLM configuration
+model:
+  provider: "openai"                            
+  name: "gpt-4o"                                                    
+
+# Prompt template configuration
+prompt: |
+  Efficiently explain the following topic in the context of {topic}:
+
+  Title: {title}
+  Brief description: {content}
+  
+  Provide a clear and concise explanation that anyone can understand and implement (if relevant). 
+  Include key concepts, practical applications, and any important considerations.
+  If applicable, provide a simple example or implementation steps.
+  leave proper spaces too between paras so its readable
+readme: |
+  Testing-on-deployed-flow

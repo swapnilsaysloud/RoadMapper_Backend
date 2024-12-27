@@ -1,0 +1,34 @@
+version: 0.0.1                          
+
+metadata:
+  name: "Chat With Me"                              
+  description: "Lets the user chat with the AI model to get the answers to their questions."       
+  author: "swapnilsaysloud"                              
+  tags: []                      
+  private: false                                       
+
+# Define the input variables required
+inputs:
+  context:                                             
+    type: string                                       
+    description: "Context of the previous chat (Can be the full convo or a part of it)"
+    required: false
+    example: ""
+  question:                                             
+    type: string                                       
+    description: "Title for the content"
+    required: true
+    example: "What is the capital of delhi"
+
+
+# LLM configuration
+model:
+  provider: "openai"                            
+  name: "gpt-4o"                                                    
+
+# Prompt template configuration
+prompt: |
+  We've had this conversation so far -  {context}
+  Based on this, answer this -  {question}
+readme: |
+  Testing-on-deployed-flow
